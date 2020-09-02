@@ -24,7 +24,7 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       bindings:
         event-in:
-          group: room
+          group: realuse
           destination: userone
           contentType: application/json
         event-out:
@@ -36,7 +36,10 @@ logging:
     org.hibernate.type: trace
     org.springframework.cloud: debug
 server:
-  port: 8083
+  port: 8084
+api:
+  url:
+    booking: http://localhost:8081
 ---
 
 spring:
@@ -56,9 +59,12 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       bindings:
         event-in:
-          group: room
+          group: realuse
           destination: userone
           contentType: application/json
         event-out:
           destination: userone
           contentType: application/json
+api:
+  url:
+    booking: http://booking:8080
