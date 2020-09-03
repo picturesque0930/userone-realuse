@@ -130,6 +130,57 @@ http POST http://a589eefdfb1ed468b8e8889aedebfc94-1575177534.ap-southeast-2.elb.
 ❯ http http://a589eefdfb1ed468b8e8889aedebfc94-1575177534.ap-southeast-2.elb.amazonaws.com:8080/booking/2
 ```
 
+* [roomUseList] 회의실 사용 시간 확인
+```
+> http  a589eefdfb1ed468b8e8889aedebfc94-1575177534.ap-southeast-2.elb.amazonaws.com:8080/roomUseLists/2
+
+{
+    "_links": {
+        "roomUseList": {
+            "href": "http://roomuselist:8080/roomUseLists/2"
+        },
+        "self": {
+            "href": "http://roomuselist:8080/roomUseLists/2"
+        }
+    },
+    "bookedUseEndDtm": "202008241030",
+    "bookedUseStartDtm": "202008240930",
+    "bookingId": 2,
+    "bookingUserId": null,
+    "realUseEndDtm": "111111",
+    "realUseStartDtm": "202009051111",
+    "roomId": 1
+}
+```
+* [notification] 알림내용 확인
+```json
+{
+    "_links": {
+        "notification": {
+            "href": "http://notification:8080/notifications/19"
+        },
+        "self": {
+            "href": "http://notification:8080/notifications/19"
+        }
+    },
+    "contents": "Booking Number[ null ] is use started",
+    "sendDtm": "2020-09-03 04:24:32",
+    "userId": "99999"
+},
+{
+    "_links": {
+        "notification": {
+            "href": "http://notification:8080/notifications/20"
+        },
+        "self": {
+            "href": "http://notification:8080/notifications/20"
+        }
+    },
+    "contents": "Booking Number[ null ] is use started",
+    "sendDtm": "2020-09-03 04:24:32",
+    "userId": "99999"
+}
+```
 ## 동기식 호출 과 비동기식 
 
 분석단계에서의 조건 중 하나로 사용종료(useEnded)->회의실 예약 취소(bookingCancel) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 
