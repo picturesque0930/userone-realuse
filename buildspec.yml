@@ -31,8 +31,8 @@ phases:
       - echo Pushing the Docker image...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG # Push docker image to ECR
       - echo Deploy service into EKS
-      - kubectl apply -f ./kubernetes/deployment.yml # Deploy
-      - kubectl apply -f ./kubernetes/service.yml # Service
+#      - kubectl apply -f ./kubernetes/deployment.yml # Deploy
+#      - kubectl apply -f ./kubernetes/service.yml # Service
 
 cache:
   paths:
