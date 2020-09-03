@@ -1,56 +1,59 @@
 # 주제 - 회의실 시스템
 
 회의실 사용을 위해 예약/취소하고 관리자가 승인/거절하는 시스템입니다.
-예약의 상태 변경시에는 알림을 받을 수 있습니다.
+예약 후 관리자 승인을 통해 확정되며, 회의실을 추가 관리하며 리스트를 볼 수 있습니다.
 ------
 
-# 구현 Repository
 
-1. https://github.com/aimmvp/cna-booking
-2. https://github.com/aimmvp/cna-confirm
-3. https://github.com/aimmvp/cna-notification ( 수정 )
+
+
+# 구현 Repository
+https//github.com/picturesque/
+1. https//github.com/picturesque/cna-booking
+2. https//github.com/picturesque/cna-confirm
+3. https//github.com/picturesque/cna-room (추가)
 4. https://github.com/aimmvp/cna-gateway ( 수정 )
 5. https://github.com/aimmvp/cna-bookinglist
-6. https://github.com/aimmvp/userone-realuse ( 추가 )
-7. https://github.com/aimmvp/userone-roomuseList ( 추가 )
+
+
 
 # 서비스 시나리오
 
 ## 기능적 요구사항
 
-1. 사용을 시작하면 알림을 준다.(useStarted)
-2. 사용을 종료하면 예약을 취소한다.(bookingCancel)
-3. 회의실의 실제 사용 시작/종료시간을 조회 할 수 있다.(roomuselist)
+1. 예약을 하고 확정을 받는다.
+2. 회의실 관리를 하며 회의실 사용불가시 예약도 취소된다.(bookingCancel)
+3. 회의실 예약 상태를 확인할 수 있다. (bookingList)
 
 ## 비기능적 요구사항
 1. 트랜잭션
-  - 사용종료(useEnded) 되었을 경우 예약을 취소한다.(Sync 호출)
+  - 예약을 하였을 경우 확정을 한다.(Sync 호출)
   
 2. 장애격리
-  - 알림기능이 취소되더라도 예약과 승인 기능은 가능하다.
+  - 룸관리와 리스트 상태가 불가하여도 예약과 승인 기능은 가능하다.
   - Circuit Breaker
   
 3. 성능
-  - 회의실 실제 사용 시간을  확인 가능하다.(CQRS)
-  - 사용시작/종료되었을 때 알림을 줄 수 있다.(Event Driven)
+  - 회의실 사용 예약상태를  확인 가능하다.(CQRS)
+  - 
   
 # 분석 설계
 ![설계 결과](https://user-images.githubusercontent.com/1927756/92066231-5d2c6500-eddc-11ea-9a0f-251279018d52.png)
-1. 회의실을 사용하기 시작하면 알림을 준다.(useStarted)
-2. 회의실 사용을 종료하면 예약을 취소한다.(useEnded) ```Saga Pattern```
-3. 회의실 사용 시간을 확인 할 수 있다.
+1. 회의실을 예약한다 .()
+2. 회의실 예약하면  확정 요청을 한다.(confirm) ```Saga Pattern```
+3. 룸을 추가 관리하는데 기존 룸이 불가상태면 예약도 취소된다.
 
 ## 비 기능적 요구사항을 커버하는지 검증
 1. 트랜잭션
   - 승인거절(confirmDenied) 되었을 경우 예약을 취소한다.(Sync 호출)
   
 2. 장애격리
-  - 알림기능이 취소되더라도 예약과 승인 기능은 가능하다.
+  - 룸관리와 리스트 상태가 불가하여도 예약과 승인 기능은 가능하다.
   - Circuit Breaker, fallback
   
 3. 성능
   - 예약/승인 상태는 예약목록 시스템에서 확인 가능하다.(CQRS)
-  - 예약/승인 상태가 변경될때 이메일로 알림을 줄 수 있다.(Event Driven)
+  - 
   
 ## 헥사고날 아키텍처 다이어그램 도출  
 ![핵사고날](https://user-images.githubusercontent.com/1927756/92069214-d11e3b80-ede3-11ea-9582-b343e06547e2.png)
@@ -62,7 +65,7 @@
 # 구현
 
 분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트로 구현함. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 808n 이다)
-booking/  confirm/  gateway/  notification/  bookinglist/
+booking/  confirm/  gateway/  room/  bookinglist/
 
 ```
 cd realuse
@@ -112,27 +115,25 @@ public interface RealuseRepository extends PagingAndSortingRepository<Realuse, L
 - 적용 후 REST API 의 테스트
 * [booking] 회의실 예약 내용 추가
 ```
-http POST http://a589eefdfb1ed468b8e8889aedebfc94-1575177534.ap-southeast-2.elb.amazonaws.com:8080/bookings roomId="1" bookingUserId="1111" useStartDtm="202008240930" useEndDtm="202008241030"
+http POST http://a31639437747a4661912515268e9f93c-815795959.ap-northeast-2.elb.amazonaws.com:8080/bookings roomId="121212" bookingUserId="8888" useStartDtm="202008240930" useEndDtm="202008241030“
+
 ```
 
-* [realuse] 회의실 사용시작
+* [realuse] 예약 확정 
 ```
-http POST http://a589eefdfb1ed468b8e8889aedebfc94-1575177534.ap-southeast-2.elb.amazonaws.com:8080/realuses bookingId="2" realUseStartDtm="20200902111111"
+http POST http://a31639437747a4661912515268e9f93c-815795959.ap-northeast-2.elb.amazonaws.com:8080/realuses bookingId="2" realUseStartDtm="20200902111111"
 ```
 
-* [realuse] 회의실 사용종료
+* [realuse] 룸 상태 변경
 ``` 
-❯ http PATCH http://a87089e89ff2c465cb235f13b552bd86-1362531007.ap-northeast-2.elb.amazonaws.com:8080/bookings/2 realUseEndDtm="123456"
+❯ http PATCH http://a31639437747a4661912515268e9f93c-815795959.ap-northeast-2.elb.amazonaws.com:8080/bookings/2 realUseEndDtm="123456"
 ```
 
 * [booking] 회의실 예약정보 삭제 확인
 ```
-❯ http http://a589eefdfb1ed468b8e8889aedebfc94-1575177534.ap-southeast-2.elb.amazonaws.com:8080/booking/2
+❯ http http://a31639437747a4661912515268e9f93c-815795959.ap-northeast-2.elb.amazonaws.com:8080/booking/2
 ```
 
-* [roomUseList] 회의실 사용 시간 확인
-```
-> http  a589eefdfb1ed468b8e8889aedebfc94-1575177534.ap-southeast-2.elb.amazonaws.com:8080/roomUseLists/2
 
 {
     "_links": {
