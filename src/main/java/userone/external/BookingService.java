@@ -13,12 +13,3 @@ public interface BookingService {
     public void bookingCancel(@PathVariable long id);
 
 }
-//
-//
-//
-//@FeignClient(name="booking", url="${api.url.booking}")
-//public interface BookingService {
-//
-//    // Booking Cancel 을 위한 삭제 mapping
-//    @DeleteMapping(value = "/bookings/{id}")
-//    public void bookingCancel(@PathVariable long id);

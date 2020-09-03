@@ -28,7 +28,7 @@ public class Realuse {
         UseEnded useEnded = new UseEnded();
         BeanUtils.copyProperties(this, useEnded);
         useEnded.publishAfterCommit();
-
+        System.out.println("#$#$#$#$#$#$#$#$ CANCEL[" + this.getBookingId() + "]");
         RealuseApplication.applicationContext.getBean(userone.external.BookingService.class).bookingCancel(this.getBookingId());
     }
 

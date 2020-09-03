@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: room
+  name: realuse
   labels:
-    app: room
+    app: realuse
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: room
+      app: realuse
   template:
     metadata:
       labels:
-        app: room
+        app: realuse
     spec:
       containers:
-        - name: room
-          image: username/room:latest
+        - name: realuse
+          image: 496278789073.dkr.ecr.ap-southeast-2.amazonaws.com/skccuser1-realuse:latest
           ports:
             - containerPort: 8080
           readinessProbe:
